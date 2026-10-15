@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:RailwayErp.MvvmDemo.ViewModels"
+             xmlns:models="clr-namespace:RailwayErp.MvvmDemo.Models"
+             x:Class="RailwayErp.MvvmDemo.Views.RouteEditPage"
+             x:DataType="vm:RouteEditViewModel"
+             Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,12" Spacing="12" MaximumWidthRequest="760">
+
+            <!-- Банер стану: відновлення чернетки / згортання / повернення -->
+            <Border Style="{StaticResource Banner}" IsVisible="{Binding HasStateBanner}" AutomationId="StateBanner">
+                <Label Text="{Binding StateBanner}" FontSize="13" />
+            </Border>
+
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Новий маршрут" Style="{StaticResource SectionTitle}" />
+                    <Label Text="Незбережені дані форми переживають згортання та перезапуск застосунку."
+                           Style="{StaticResource Caption}" />
+
+                    <Label Text="Номер маршруту" Style="{StaticResource FieldLabel}" />
+                    <Entry Text="{Binding RouteNumber}" Placeholder="Напр. 091К-2026" AutomationId="RouteNumberEntry" />
+
+                    <Label Text="Поїзд" Style="{StaticResource FieldLabel}" />
+                    <Picker ItemsSource="{Binding AvailableTrains}" SelectedItem="{Binding SelectedTrain}"
+                            ItemDisplayBinding="{Binding DisplayName, x:DataType=models:Train}"
+                            Title="Оберіть поїзд" AutomationId="TrainPicker" />
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <VerticalStackLayout>
+                            <Label Text="Станція відправлення" Style="{StaticResource FieldLabel}" />
+                            <Entry Text="{Binding DepartureStation}" Placeholder="Київ-Пасажирський"
+                                   AutomationId="DepartureEntry" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Станція прибуття" Style="{StaticResource FieldLabel}" />
+                            <Entry Text="{Binding ArrivalStation}" Placeholder="Львів" AutomationId="ArrivalEntry" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <VerticalStackLayout>
+                            <Label Text="Дата відправлення" Style="{StaticResource FieldLabel}" />
+                            <DatePicker Date="{Binding DepartureDate}" MinimumDate="{Binding MinimumDate}"
+                                        Format="dd.MM.yyyy" AutomationId="DepartureDatePicker" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Час відправлення" Style="{StaticResource FieldLabel}" />
+                            <TimePicker Time="{Binding DepartureTime}" Format="HH:mm" AutomationId="DepartureTimePicker" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <Label Text="Проміжні зупинки" Style="{StaticResource FieldLabel}" />
+                    <Editor Text="{Binding IntermediateStops}" Placeholder="Через кому: Житомир, Рівне..."
+                            AutoSize="TextChanges" MinimumHeightRequest="60" AutomationId="StopsEditor" />
+
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,6,0,0">
+                        <Label Text="Експрес (без зупинок на малих станціях)" VerticalOptions="Center" />
+                        <Switch Grid.Column="1" IsToggled="{Binding IsExpress}" AutomationId="ExpressSwitch" />
+                    </Grid>
+
+                    <Label Text="Примітки диспетчера" Style="{StaticResource FieldLabel}" />
+                    <Editor Text="{Binding Notes}" Placeholder="Додаткова інформація" AutoSize="TextChanges"
+                            MinimumHeightRequest="60" AutomationId="NotesEditor" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="{Binding ValidationMessage}" Style="{StaticResource ErrorText}" AutomationId="ValidationLabel" />
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                <Button Text="Зберегти маршрут" Command="{Binding SaveCommand}" IsEnabled="{Binding IsNotBusy}"
+                        AutomationId="SaveRouteButton" />
+                <Button Grid.Column="1" Text="Очистити форму" Command="{Binding ClearCommand}"
+                        Style="{StaticResource SecondaryButton}" AutomationId="ClearRouteButton" />
+            </Grid>
+
+            <Label Text="{Binding DraftStatus}" Style="{StaticResource Caption}" AutomationId="DraftStatusLabel" />
+            <Label Text="{Binding SavedRoutesCount, StringFormat='Збережено маршрутів у цій сесії: {0}'}"
+                   Style="{StaticResource Caption}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

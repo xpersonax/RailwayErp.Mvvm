@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:RailwayErp.MvvmDemo.ViewModels"
+             xmlns:appModel="clr-namespace:Microsoft.Maui.ApplicationModel;assembly=Microsoft.Maui.Essentials"
+             x:Class="RailwayErp.MvvmDemo.Views.SettingsPage"
+             x:DataType="vm:SettingsViewModel"
+             Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,12" Spacing="12" MaximumWidthRequest="760">
+
+            <!-- Тема оформлення -->
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="Тема оформлення" Style="{StaticResource SectionTitle}" />
+                    <Label Text="Вибір застосовується до всіх сторінок (Application.UserAppTheme) і зберігається в Preferences."
+                           Style="{StaticResource Caption}" />
+
+                    <VerticalStackLayout RadioButtonGroup.GroupName="AppThemeGroup"
+                                         RadioButtonGroup.SelectedValue="{Binding SelectedTheme, Mode=TwoWay}"
+                                         Spacing="0">
+                        <RadioButton Content="Як у системі" Value="{x:Static appModel:AppTheme.Unspecified}"
+                                     AutomationId="ThemeSystemRadio" />
+                        <RadioButton Content="Світла" Value="{x:Static appModel:AppTheme.Light}"
+                                     AutomationId="ThemeLightRadio" />
+                        <RadioButton Content="Темна" Value="{x:Static appModel:AppTheme.Dark}"
+                                     AutomationId="ThemeDarkRadio" />
+                    </VerticalStackLayout>
+
+                    <Label Text="{Binding ThemeStatus}" Style="{StaticResource Caption}" AutomationId="ThemeStatusLabel" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Deep link -->
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Deep link" Style="{StaticResource SectionTitle}" />
+                    <Label Text="Посилання відкриває конкретний екран застосунку. Тут можна перевірити розбір URI тим самим сервісом, що обробляє зовнішні посилання."
+                           Style="{StaticResource Caption}" />
+
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                        <Entry Text="{Binding DeepLinkInput}" Keyboard="Url" AutomationId="DeepLinkEntry"
+                               ReturnCommand="{Binding OpenDeepLinkCommand}" />
+                        <Button Grid.Column="1" Text="Відкрити" Command="{Binding OpenDeepLinkCommand}"
+                                AutomationId="OpenDeepLinkButton" />
+                    </Grid>
+                    <Label Text="{Binding DeepLinkResult}" FontSize="13" AutomationId="DeepLinkResultLabel" />
+
+                    <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding DeepLinkExamples}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="x:String">
+                                <Button Text="{Binding .}" Style="{StaticResource ChipButton}" Margin="0,0,6,6"
+                                        Command="{Binding UseExampleCommand, Source={RelativeSource AncestorType={x:Type vm:SettingsViewModel}}, x:DataType=vm:SettingsViewModel}"
+                                        CommandParameter="{Binding .}" />
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </FlexLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Реєстрація схеми в Windows (unpackaged) -->
+            <Border Style="{StaticResource Card}" IsVisible="{Binding IsProtocolRegistrationSupported}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Схема railwayerp:// у Windows" Style="{StaticResource SectionTitle}" />
+                    <Label Text="Для unpackaged-застосунку схему реєструє сам застосунок (HKCU, без прав адміністратора). Після цього посилання відкривається з браузера, Win+R або командою start."
+                           Style="{StaticResource Caption}" />
+                    <HorizontalStackLayout Spacing="8">
+                        <Button Text="Зареєструвати" Command="{Binding RegisterProtocolCommand}" AutomationId="RegisterProtocolButton" />
+                        <Button Text="Скасувати реєстрацію" Command="{Binding UnregisterProtocolCommand}"
+                                Style="{StaticResource SecondaryButton}" AutomationId="UnregisterProtocolButton" />
+                    </HorizontalStackLayout>
+                    <Label Text="{Binding ProtocolStatus}" FontSize="13" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Підказка для Android -->
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="Перевірка на Android" Style="{StaticResource SectionTitle}" />
+                    <Label Text="IntentFilter у MainActivity приймає railwayerp://… та https://railwayerp.example.com/train/…"
+                           Style="{StaticResource Caption}" />
+                    <Label FontFamily="{OnPlatform WinUI=Consolas, Android=monospace, iOS=Menlo, MacCatalyst=Menlo}"
+                           FontSize="12" LineBreakMode="CharacterWrap"
+                           Text="adb shell am start -W -a android.intent.action.VIEW -d &quot;railwayerp://train/3&quot; com.railwayerp.mvvmdemo" />
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

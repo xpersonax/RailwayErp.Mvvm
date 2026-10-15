@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:RailwayErp.MvvmDemo.ViewModels"
+             xmlns:conv="clr-namespace:RailwayErp.MvvmDemo.Converters"
+             x:Class="RailwayErp.MvvmDemo.Views.TrainDetailsPage"
+             x:DataType="vm:TrainDetailsViewModel"
+             Title="{Binding Title}">
+
+    <ContentPage.Resources>
+        <conv:TrainStatusToColorConverter x:Key="StatusColor" />
+        <Style x:Key="Key" TargetType="Label" BasedOn="{StaticResource Caption}">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="VerticalOptions" Value="Center" />
+        </Style>
+        <Style x:Key="Value" TargetType="Label">
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontFamily" Value="OpenSansSemibold" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray950}, Dark={StaticResource White}}" />
+        </Style>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,12" Spacing="12">
+
+            <!-- Банер, якщо сторінку відкрито за зовнішнім посиланням -->
+            <Border Style="{StaticResource DeepLinkBanner}" IsVisible="{Binding IsOpenedFromDeepLink}"
+                    AutomationId="DeepLinkBanner">
+                <VerticalStackLayout Spacing="2">
+                    <Label Text="Відкрито за deep link" FontFamily="OpenSansSemibold" />
+                    <Label Text="{Binding DeepLink}" FontSize="13" />
+                </VerticalStackLayout>
+            </Border>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" HorizontalOptions="Center" />
+
+            <Border Style="{StaticResource Card}" IsVisible="{Binding IsNotFound}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Style="{StaticResource SectionTitle}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Поїзд #" />
+                                <Span Text="{Binding RequestedId}" />
+                                <Span Text=" не знайдено" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    <Label Text="Перевірте ідентифікатор у посиланні. Доступні поїзди: 1–8." Style="{StaticResource Caption}" />
+                    <Button Text="До списку поїздів" Command="{Binding GoToListCommand}" HorizontalOptions="Start" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource Card}" IsVisible="{Binding HasTrain}" Padding="18,16">
+                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" RowSpacing="4">
+                    <Label Text="{Binding Train.Number}" FontSize="32" FontFamily="OpenSansSemibold"
+                           TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                           AutomationId="TrainNumberLabel" />
+                    <Border Grid.Column="1" VerticalOptions="Center" Padding="12,5" StrokeThickness="0"
+                            StrokeShape="RoundRectangle 12"
+                            BackgroundColor="{Binding Train.Status, Converter={StaticResource StatusColor}}">
+                        <Label Text="{Binding Train.StatusText}" TextColor="White" FontFamily="OpenSansSemibold" />
+                    </Border>
+                    <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Train.Name}" FontSize="20" />
+                    <Label Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding Train.Category}" Style="{StaticResource Caption}" />
+                </Grid>
+            </Border>
+
+            <Border Style="{StaticResource Card}" IsVisible="{Binding HasTrain}">
+                <Grid ColumnDefinitions="140,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="10">
+                    <Label Text="Відправлення" Style="{StaticResource Key}" />
+                    <Label Grid.Column="1" Style="{StaticResource Value}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="{Binding Train.From}" />
+                                <Span Text=", " />
+                                <Span Text="{Binding Train.Departure, StringFormat='{0:hh\\:mm}'}" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+
+                    <Label Grid.Row="1" Text="Прибуття" Style="{StaticResource Key}" />
+                    <Label Grid.Row="1" Grid.Column="1" Style="{StaticResource Value}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="{Binding Train.To}" />
+                                <Span Text=", " />
+                                <Span Text="{Binding Train.Arrival, StringFormat='{0:hh\\:mm}'}" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+
+                    <Label Grid.Row="2" Text="Затримка" Style="{StaticResource Key}" />
+                    <Label Grid.Row="2" Grid.Column="1" Text="{Binding Train.DelayMinutes, StringFormat='{0} хв'}" Style="{StaticResource Value}" />
+
+                    <Label Grid.Row="3" Text="Локомотив" Style="{StaticResource Key}" />
+                    <Label Grid.Row="3" Grid.Column="1" Text="{Binding Train.Locomotive}" Style="{StaticResource Value}" />
+
+                    <Label Grid.Row="4" Text="Кількість вагонів" Style="{StaticResource Key}" />
+                    <Label Grid.Row="4" Grid.Column="1" Text="{Binding Train.Wagons}" Style="{StaticResource Value}" />
+
+                    <Label Grid.Row="5" Text="Ідентифікатор" Style="{StaticResource Key}" />
+                    <Label Grid.Row="5" Grid.Column="1" Text="{Binding Train.Id, StringFormat='#{0} · railwayerp://train/{0}'}" Style="{StaticResource Value}" />
+                </Grid>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -5,18 +5,18 @@
 
     <!-- Note: For Android please see also Platforms\Android\Resources\values\colors.xml -->
 
-    <Color x:Key="Primary">#512BD4</Color>
-    <Color x:Key="PrimaryDark">#ac99ea</Color>
-    <Color x:Key="PrimaryDarkText">#242424</Color>
-    <Color x:Key="Secondary">#DFD8F7</Color>
-    <Color x:Key="SecondaryDarkText">#9880e5</Color>
-    <Color x:Key="Tertiary">#2B0B98</Color>
+    <Color x:Key="Primary">#1F5FAD</Color>
+    <Color x:Key="PrimaryDark">#8DB8F0</Color>
+    <Color x:Key="PrimaryDarkText">#0E1A2B</Color>
+    <Color x:Key="Secondary">#E3EDFA</Color>
+    <Color x:Key="SecondaryDarkText">#A9C6EE</Color>
+    <Color x:Key="Tertiary">#123E73</Color>
 
     <Color x:Key="White">White</Color>
     <Color x:Key="Black">Black</Color>
     <Color x:Key="Magenta">#D600AA</Color>
     <Color x:Key="MidnightBlue">#190649</Color>
-    <Color x:Key="OffBlack">#1f1f1f</Color>
+    <Color x:Key="OffBlack">#17191D</Color>
 
     <Color x:Key="Gray100">#E1E1E1</Color>
     <Color x:Key="Gray200">#C8C8C8</Color>
@@ -41,4 +41,14 @@
     <SolidColorBrush x:Key="Gray600Brush" Color="{StaticResource Gray600}"/>
     <SolidColorBrush x:Key="Gray900Brush" Color="{StaticResource Gray900}"/>
     <SolidColorBrush x:Key="Gray950Brush" Color="{StaticResource Gray950}"/>
+
+    <!-- Railway ERP: семантичні кольори для світлої / темної теми -->
+    <Color x:Key="CardLight">#F5F7FB</Color>
+    <Color x:Key="CardDark">#23272E</Color>
+    <Color x:Key="BannerLight">#E3EDFA</Color>
+    <Color x:Key="BannerDark">#1D3557</Color>
+    <Color x:Key="DeepLinkBannerLight">#FFF3E0</Color>
+    <Color x:Key="DeepLinkBannerDark">#4A3112</Color>
+    <Color x:Key="Danger">#C62828</Color>
+    <Color x:Key="DangerDark">#EF9A9A</Color>
 </ResourceDictionary>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:RailwayErp.MvvmDemo.ViewModels"
+             xmlns:models="clr-namespace:RailwayErp.MvvmDemo.Models"
+             xmlns:conv="clr-namespace:RailwayErp.MvvmDemo.Converters"
+             x:Class="RailwayErp.MvvmDemo.Views.TrainListPage"
+             x:DataType="vm:TrainListViewModel"
+             Title="{Binding Title}">
+
+    <ContentPage.Resources>
+        <conv:TrainStatusToColorConverter x:Key="StatusColor" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*" RowSpacing="12" Padding="16,12,16,0">
+
+        <Border Style="{StaticResource Card}">
+            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="12">
+                <Label Text="Оперативний розклад" Style="{StaticResource SectionTitle}" />
+                <Label Grid.Row="1" Text="{Binding LastUpdatedText}" Style="{StaticResource Caption}"
+                       AutomationId="LastUpdatedLabel" />
+                <Label Grid.Row="2" Text="{Binding AutoRefreshText}" Style="{StaticResource Caption}"
+                       AutomationId="AutoRefreshLabel" />
+                <HorizontalStackLayout Grid.Column="1" Grid.RowSpan="3" Spacing="10" VerticalOptions="Center">
+                    <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                                       WidthRequest="24" HeightRequest="24" />
+                    <Button Text="Оновити" Command="{Binding LoadCommand}" AutomationId="RefreshButton" />
+                </HorizontalStackLayout>
+            </Grid>
+        </Border>
+
+        <RefreshView Grid.Row="1" Command="{Binding LoadCommand}" IsRefreshing="{Binding IsRefreshing}">
+            <CollectionView ItemsSource="{Binding Trains}" SelectionMode="None" AutomationId="TrainsList">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.EmptyView>
+                    <Label Text="Завантаження розкладу..." Style="{StaticResource Caption}"
+                           HorizontalOptions="Center" Margin="0,24" />
+                </CollectionView.EmptyView>
+                <CollectionView.Footer>
+                    <BoxView HeightRequest="12" Color="Transparent" />
+                </CollectionView.Footer>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Train">
+                        <Border Style="{StaticResource Card}" AutomationId="{Binding Number}">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding OpenTrainCommand, Source={RelativeSource AncestorType={x:Type vm:TrainListViewModel}}, x:DataType=vm:TrainListViewModel}"
+                                    CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="72,*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="2">
+                                <Label Grid.RowSpan="2" Text="{Binding Number}" FontSize="20" FontFamily="OpenSansSemibold"
+                                       VerticalOptions="Center"
+                                       TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
+                                <Label Grid.Column="1" Text="{Binding Name}" FontSize="16" FontFamily="OpenSansSemibold" />
+                                <Label Grid.Column="1" Grid.Row="1" Style="{StaticResource Caption}">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{Binding ScheduleText}" />
+                                            <Span Text="  ·  " />
+                                            <Span Text="{Binding Category}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                                <Border Grid.Column="2" Grid.RowSpan="2" VerticalOptions="Center" Padding="10,4"
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                        BackgroundColor="{Binding Status, Converter={StaticResource StatusColor}}">
+                                    <Label Text="{Binding StatusText}" TextColor="White" FontSize="12"
+                                           FontFamily="OpenSansSemibold" />
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</ContentPage>

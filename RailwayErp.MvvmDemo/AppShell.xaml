@@ -3,12 +3,17 @@
     x:Class="RailwayErp.MvvmDemo.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:RailwayErp.MvvmDemo"
-    Title="RailwayErp.MvvmDemo">
+    xmlns:views="clr-namespace:RailwayErp.MvvmDemo.Views"
+    Title="Railway ERP"
+    Shell.FlyoutBehavior="Disabled">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <!-- Маршрути вкладок: //trains, //route, //log, //settings.
+         Сторінки створюються через DI (ContentTemplate + реєстрація в MauiProgram). -->
+    <TabBar>
+        <ShellContent Title="Поїзди" Route="trains" ContentTemplate="{DataTemplate views:TrainListPage}" />
+        <ShellContent Title="Маршрут" Route="route" ContentTemplate="{DataTemplate views:RouteEditPage}" />
+        <ShellContent Title="Журнал" Route="log" ContentTemplate="{DataTemplate views:LogPage}" />
+        <ShellContent Title="Налаштування" Route="settings" ContentTemplate="{DataTemplate views:SettingsPage}" />
+    </TabBar>
 
 </Shell>
