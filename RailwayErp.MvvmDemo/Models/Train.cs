@@ -31,6 +31,10 @@ public sealed class Train
 
     public string ScheduleText => $"{Departure:hh\\:mm} → {Arrival:hh\\:mm}";
 
+    public string DepartureText => $"{From}, {Departure:hh\\:mm}";
+
+    public string ArrivalText => $"{To}, {Arrival:hh\\:mm}";
+
     public string StatusText => Status switch
     {
         TrainStatus.OnTime => "За розкладом",

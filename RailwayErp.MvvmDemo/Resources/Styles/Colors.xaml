@@ -45,6 +45,7 @@
     <!-- Railway ERP: семантичні кольори для світлої / темної теми -->
     <Color x:Key="CardLight">#F5F7FB</Color>
     <Color x:Key="CardDark">#23272E</Color>
+    <Color x:Key="InputDark">#1A1D22</Color>
     <Color x:Key="BannerLight">#E3EDFA</Color>
     <Color x:Key="BannerDark">#1D3557</Color>
     <Color x:Key="DeepLinkBannerLight">#FFF3E0</Color>

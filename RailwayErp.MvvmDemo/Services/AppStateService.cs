@@ -16,6 +16,10 @@ public interface IAppStateService
     string SessionId { get; }
     DateTimeOffset SessionStartedAt { get; }
     AppLifecycleState LifecycleState { get; }
+
+    /// <summary>true між Stopped і наступним Resumed — застосунок згорнуто.</summary>
+    bool IsInBackground { get; }
+
     int StopCount { get; }
     int ResumeCount { get; }
     DateTimeOffset? LastStoppedAt { get; }
@@ -54,6 +58,7 @@ public sealed class AppStateService(IPreferences preferences, ILogger<AppStateSe
     public string SessionId { get; } = Guid.NewGuid().ToString("N")[..8].ToUpperInvariant();
     public DateTimeOffset SessionStartedAt { get; } = DateTimeOffset.Now;
     public AppLifecycleState LifecycleState { get; private set; } = AppLifecycleState.NotStarted;
+    public bool IsInBackground { get; private set; }
     public int StopCount { get; private set; }
     public int ResumeCount { get; private set; }
     public DateTimeOffset? LastStoppedAt { get; private set; }
@@ -66,20 +71,24 @@ public sealed class AppStateService(IPreferences preferences, ILogger<AppStateSe
     public void SetLifecycleState(AppLifecycleState state)
     {
         LifecycleState = state;
+        var returnedFromBackground = false;
 
         switch (state)
         {
             case AppLifecycleState.Stopped:
+                IsInBackground = true;
                 StopCount++;
                 LastStoppedAt = DateTimeOffset.Now;
                 break;
-            case AppLifecycleState.Resumed:
+            case AppLifecycleState.Resumed when IsInBackground:
+                IsInBackground = false;
+                returnedFromBackground = true;
                 ResumeCount++;
                 LastResumedAt = DateTimeOffset.Now;
                 break;
         }
 
-        WeakReferenceMessenger.Default.Send(new AppLifecycleChangedMessage(state));
+        WeakReferenceMessenger.Default.Send(new AppLifecycleChangedMessage(state, returnedFromBackground));
     }
 
     public void UpdateRouteDraft(RouteDraft draft) => RouteDraft = draft.IsEmpty ? null : draft;

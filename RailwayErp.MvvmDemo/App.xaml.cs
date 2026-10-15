@@ -19,6 +19,9 @@ public partial class App : Application
     private readonly INavigationService _navigation;
     private readonly ILogger<App> _logger;
 
+    /// <summary>Сторінка з попереднього сеансу (LastPage перезапишеться першою ж навігацією Shell).</summary>
+    private readonly string? _pageToRestore;
+
     public App(IServiceProvider services, IAppStateService appState, IThemeService theme,
         IDeepLinkService deepLinks, INavigationService navigation, ILogger<App> logger)
     {
@@ -35,6 +38,7 @@ public partial class App : Application
 
         // Якщо попередній процес було знищено у фоні, тут повертаємо чернетку та останню сторінку.
         _appState.RestoreState();
+        _pageToRestore = _appState.LastPage;
     }
 
     protected override Window CreateWindow(IActivationState? activationState)
@@ -43,7 +47,7 @@ public partial class App : Application
         _theme.ApplySavedTheme();
 
         var shell = _services.GetRequiredService<AppShell>();
-        shell.Loaded += OnShellLoaded;
+        shell.InitialNavigationCompleted += OnShellReady;
 
         var window = new Window(shell) { Title = "Railway ERP · MVVM Demo" };
 
@@ -97,11 +101,16 @@ public partial class App : Application
 
     private void OnWindowResumed(object? sender, EventArgs e)
     {
-        var inBackground = _appState.LastStoppedAt is { } stoppedAt
-            ? (DateTimeOffset.Now - stoppedAt).TotalSeconds
-            : 0;
-        _logger.LogInformation("Window.Resumed — повернення на передній план (у фоні {Seconds:0.#} с), відновлюємо стан",
-            inBackground);
+        if (_appState.IsInBackground)
+        {
+            var seconds = (DateTimeOffset.Now - _appState.LastStoppedAt!.Value).TotalSeconds;
+            _logger.LogInformation("Window.Resumed — повернення з фону (у фоні {Seconds:0.#} с), відновлюємо стан", seconds);
+        }
+        else
+        {
+            // Особливість WinUI: Resumed приходить і при поверненні фокусу у вікно, яке не згортали.
+            _logger.LogInformation("Window.Resumed — вікно знову у фокусі без згортання, стан актуальний");
+        }
 
         _appState.SetLifecycleState(AppLifecycleState.Resumed);
     }
@@ -126,10 +135,10 @@ public partial class App : Application
     }
 
     /// <summary>Shell готовий до навігації: відновлюємо останню сторінку або відкриваємо відкладений deep link.</summary>
-    private async void OnShellLoaded(object? sender, EventArgs e)
+    private async void OnShellReady(object? sender, EventArgs e)
     {
-        if (sender is Shell shell)
-            shell.Loaded -= OnShellLoaded;
+        if (sender is AppShell shell)
+            shell.InitialNavigationCompleted -= OnShellReady;
 
         try
         {
@@ -146,7 +155,7 @@ public partial class App : Application
 
     private async Task RestoreLastPageAsync()
     {
-        var lastPage = _appState.LastPage;
+        var lastPage = _pageToRestore;
         if (string.IsNullOrEmpty(lastPage))
             return;
 

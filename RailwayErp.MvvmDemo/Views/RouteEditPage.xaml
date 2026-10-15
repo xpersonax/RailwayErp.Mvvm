@@ -44,12 +44,13 @@
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
                         <VerticalStackLayout>
                             <Label Text="Дата відправлення" Style="{StaticResource FieldLabel}" />
-                            <DatePicker Date="{Binding DepartureDate}" MinimumDate="{Binding MinimumDate}"
+                            <DatePicker x:Name="DepartureDatePicker"
+                                        Date="{Binding DepartureDate}" MinimumDate="{Binding MinimumDate}"
                                         Format="dd.MM.yyyy" AutomationId="DepartureDatePicker" />
                         </VerticalStackLayout>
                         <VerticalStackLayout Grid.Column="1">
                             <Label Text="Час відправлення" Style="{StaticResource FieldLabel}" />
-                            <TimePicker Time="{Binding DepartureTime}" Format="HH:mm" AutomationId="DepartureTimePicker" />
+                            <TimePicker x:Name="DepartureTimePicker" Time="{Binding DepartureTime}" Format="HH:mm" AutomationId="DepartureTimePicker" />
                         </VerticalStackLayout>
                     </Grid>
 

@@ -129,7 +129,7 @@ public sealed partial class RouteEditViewModel : BaseViewModel, IRecipient<AppLi
 
     public void Receive(AppLifecycleChangedMessage message)
     {
-        switch (message.Value)
+        switch (message.State)
         {
             case AppLifecycleState.Stopped:
                 // App одразу після цього повідомлення викличе SaveState() — чернетка має бути актуальною.
@@ -137,7 +137,7 @@ public sealed partial class RouteEditViewModel : BaseViewModel, IRecipient<AppLi
                 StateBanner = $"Застосунок згорнуто о {DateTime.Now:HH:mm:ss} — стан форми збережено (Window.Stopped).";
                 break;
 
-            case AppLifecycleState.Resumed:
+            case AppLifecycleState.Resumed when message.ReturnedFromBackground:
                 if (_appState.RouteDraft is { } draft)
                 {
                     ApplyDraft(draft);

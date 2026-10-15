@@ -8,6 +8,13 @@ public partial class AppShell : Shell
 {
     private readonly IAppStateService _appState;
     private readonly ILogger<AppShell> _logger;
+    private bool _isInitialNavigationDone;
+
+    /// <summary>
+    /// Shell виконав першу навігацію (на вкладку за замовчуванням) — з цього моменту GoToAsync безпечний.
+    /// Використовується замість Loaded, яка для Shell на Windows не викликається надійно.
+    /// </summary>
+    public event EventHandler? InitialNavigationCompleted;
 
     public AppShell(IAppStateService appState, ILogger<AppShell> logger)
     {
@@ -27,5 +34,12 @@ public partial class AppShell : Shell
         _appState.LastPage = args.Current?.Location.OriginalString;
         _logger.LogInformation("Shell.Navigated: {Previous} → {Current} ({Source})",
             args.Previous?.Location.OriginalString ?? "—", args.Current?.Location.OriginalString ?? "—", args.Source);
+
+        if (!_isInitialNavigationDone)
+        {
+            _isInitialNavigationDone = true;
+            // Не навігуємо всередині обробника навігації — відкладаємо на наступний цикл диспетчера.
+            Dispatcher.Dispatch(() => InitialNavigationCompleted?.Invoke(this, EventArgs.Empty));
+        }
     }
 }

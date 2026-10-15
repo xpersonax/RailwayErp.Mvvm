@@ -57,7 +57,7 @@ public sealed partial class LogViewModel : BaseViewModel, IRecipient<AppLifecycl
     {
         SessionText = $"Сесія {_appState.SessionId} · старт {_appState.SessionStartedAt:HH:mm:ss}";
         StateText = $"Поточний стан: {_appState.LifecycleState}";
-        CountersText = $"Згортань (Stopped): {_appState.StopCount} · відновлень (Resumed): {_appState.ResumeCount}";
+        CountersText = $"Згортань (Stopped): {_appState.StopCount} · повернень із фону (Resumed): {_appState.ResumeCount}";
         SavedText = _appState.LastSavedAt is { } saved
             ? $"Останнє збереження стану: {saved:HH:mm:ss} · сторінка {_appState.LastPage ?? "—"}"
             : "Стан у цій сесії ще не зберігався";

@@ -68,26 +68,10 @@
             <Border Style="{StaticResource Card}" IsVisible="{Binding HasTrain}">
                 <Grid ColumnDefinitions="140,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="10">
                     <Label Text="Відправлення" Style="{StaticResource Key}" />
-                    <Label Grid.Column="1" Style="{StaticResource Value}">
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="{Binding Train.From}" />
-                                <Span Text=", " />
-                                <Span Text="{Binding Train.Departure, StringFormat='{0:hh\\:mm}'}" />
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
+                    <Label Grid.Column="1" Text="{Binding Train.DepartureText}" Style="{StaticResource Value}" />
 
                     <Label Grid.Row="1" Text="Прибуття" Style="{StaticResource Key}" />
-                    <Label Grid.Row="1" Grid.Column="1" Style="{StaticResource Value}">
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="{Binding Train.To}" />
-                                <Span Text=", " />
-                                <Span Text="{Binding Train.Arrival, StringFormat='{0:hh\\:mm}'}" />
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
+                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding Train.ArrivalText}" Style="{StaticResource Value}" />
 
                     <Label Grid.Row="2" Text="Затримка" Style="{StaticResource Key}" />
                     <Label Grid.Row="2" Grid.Column="1" Text="{Binding Train.DelayMinutes, StringFormat='{0} хв'}" Style="{StaticResource Value}" />

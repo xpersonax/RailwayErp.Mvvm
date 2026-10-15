@@ -100,13 +100,13 @@ public sealed partial class TrainListViewModel : BaseViewModel, IRecipient<AppLi
 
     public void Receive(AppLifecycleChangedMessage message)
     {
-        switch (message.Value)
+        switch (message.State)
         {
             case AppLifecycleState.Stopped:
                 StopAutoRefresh("застосунок згорнуто");
                 break;
 
-            case AppLifecycleState.Resumed:
+            case AppLifecycleState.Resumed when message.ReturnedFromBackground:
                 StartAutoRefresh();
                 LoadCommand.Execute(null); // після повернення показуємо свіжі дані
                 break;
